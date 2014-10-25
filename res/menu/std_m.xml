@@ -1,0 +1,8 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="at.oeldin.motes.LoginActivity" >
+    <item android:id="@+id/menu_notes" android:title="@string/menu_text_notes" app:showAsAction="ifRoom|withText" android:icon="@drawable/ic_action_group"></item><item android:id="@+id/menu_logout" android:title="@string/menu_text_logout" app:showAsAction="never"></item>
+    
+
+</menu>
