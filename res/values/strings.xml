@@ -13,5 +13,9 @@
     <string name="year_radio_15_text">2015/16</string>
     <string name="menu_text_logout">Logout</string>
     <string name="menu_text_notes">Notes</string>
+    <string name="title_activity_student">.StudentA</string>
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
 
 </resources>

@@ -1,15 +1,9 @@
 package at.oeldin.motes;
 
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v7.app.ActionBarActivity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
 
 
 
@@ -24,7 +18,16 @@ public class LoginActivity extends ActionBarActivity {
         }
     }
 
-
+    public void loginButtonClicked(View view){
+    	
+    	//TODO: login
+    	//TODO: save login to preferences
+    	
+    	Intent mainIntent = new Intent(this, MainActivity.class);
+    	
+    	startActivity(mainIntent);
+    	
+    }
 
     /**
      * A placeholder fragment containing a simple view.

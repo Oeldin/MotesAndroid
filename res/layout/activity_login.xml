@@ -55,7 +55,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/pass_edit"
         android:layout_marginTop="50dp"
-        android:text="@string/login_button_text" />
+        android:text="@string/login_button_text" 
+        android:onClick="loginButtonClicked"/>
     
     </RelativeLayout>
 

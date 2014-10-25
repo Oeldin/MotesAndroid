@@ -1,15 +1,12 @@
 package at.oeldin.motes;
 
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
 
 public class MainActivity extends ActionBarActivity{
 	
@@ -43,6 +40,14 @@ public class MainActivity extends ActionBarActivity{
 	        		return super.onOptionsItemSelected(item);
 		        
 	        }
+	    }
+	    
+	    @Override
+	    public void onBackPressed() {
+	    	LoginActivity loginA = new LoginActivity();
+	    	loginA.super.onBa
+	               loginA.super.onBackPressed();
+
 	    }
 
 
