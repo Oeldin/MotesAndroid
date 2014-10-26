@@ -12,10 +12,24 @@ public class LoginActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        if (getIntent().getBooleanExtra("Exit", false))
+        {
+            super.onBackPressed();
+        }
+        
         setContentView(R.layout.activity_login);
         if (savedInstanceState == null) {
             
         }
+    }
+    
+    @Override
+    protected void onResume(){
+    	
+    	//TODO: check if user data is stored and login
+    	
+    	
     }
 
     public void loginButtonClicked(View view){
@@ -24,7 +38,6 @@ public class LoginActivity extends ActionBarActivity {
     	//TODO: save login to preferences
     	
     	Intent mainIntent = new Intent(this, MainActivity.class);
-    	
     	startActivity(mainIntent);
     	
     }

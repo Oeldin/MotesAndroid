@@ -3,6 +3,7 @@ package at.oeldin.motes;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -44,9 +45,12 @@ public class MainActivity extends ActionBarActivity{
 	    
 	    @Override
 	    public void onBackPressed() {
-	    	LoginActivity loginA = new LoginActivity();
-	    	loginA.super.onBa
-	               loginA.super.onBackPressed();
+	    	
+	    	//call login activity which should exit because of the extra
+	    	Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+	    	intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+	    	intent.putExtra("Exit", true);
+	    	startActivity(intent);
 
 	    }
 
