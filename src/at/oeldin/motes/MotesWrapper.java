@@ -206,31 +206,54 @@ public class MotesWrapper extends Activity{
 			
 			//try every fucking array
 			try{
-				
 				//should throw exception if it wasn't the specified request
 				JSONArray tempArray = jObject.getJSONArray("students");
-				List<StudentObject> tempStudents = new ArrayList<StudentObject>();
-				
-				for(int i = 0; i<tempArray.length();i++){
-					JSONObject tempObject = tempArray.getJSONObject(i);
-					StudentObject tempSObject = new StudentObject();
+				if(tempArray != null){
+					List<StudentObject> tempStudents = new ArrayList<StudentObject>();
 					
-					tempSObject.id = tempObject.getInt("id");
-					tempSObject.name = tempObject.getString("name");
+					for(int i = 0; i<tempArray.length();i++){
+						JSONObject tempObject = tempArray.getJSONObject(i);
+						StudentObject tempSObject = new StudentObject();
+						
+						tempSObject.id = tempObject.getInt("id");
+						tempSObject.name = tempObject.getString("name");
+						
+						tempStudents.add(tempSObject);
+					}
 					
-					tempStudents.add(tempSObject);
+					mobject.students = tempStudents;
+					return mobject;
 				}
-				
-		        subjects;
-		        teachers;
-		        activities;
-		        notes
-				
 			}
 			catch(Exception e){}
 			
+			try{
+				//should throw exception if it wasn't the specified request
+				JSONArray tempArray = jObject.getJSONArray("subjects");
+				if(tempArray != null){
+					List<StudentObject> tempStudents = new ArrayList<StudentObject>();
+					
+					for(int i = 0; i<tempArray.length();i++){
+						JSONObject tempObject = tempArray.getJSONObject(i);
+						StudentObject tempSObject = new StudentObject();
+						
+						tempSObject.id = tempObject.getInt("id");
+						tempSObject.name = tempObject.getString("name");
+						
+						tempStudents.add(tempSObject);
+					}
+					
+					mobject.students = tempStudents;
+					return mobject;
+				}
+			}
+			catch(Exception e){}
 			
-			return mobject;
+			subjects;
+	        teachers;
+	        activities;
+	        notes
+			
 		}
 
 		Boolean submitModRequest(String request)
