@@ -13,27 +13,35 @@ import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import android.app.Activity;
 import android.content.*;
+import android.os.AsyncTask;
 import android.os.Build;
+import android.preference.PreferenceManager;
+import android.widget.Toast;
 import at.oeldin.motes.MotesObject.*;
 
 
 
-public class MotesWrapper extends Activity{
+public class MotesWrapper {
 	    private Boolean repeat;
 	    private String adress;
 	    private SharedPreferences settings;
 	    private SharedPreferences.Editor settingsEditor;
 	    private String DEFAULT_YEAR = "14";
+	    private Context context;
+	    private Activity activity;
 	
-	    public MotesWrapper()
+	    public MotesWrapper(Context context)
 	    {
+	    	this.context = context;
+	    	this.activity = (Activity) context;
 	    	disableConnectionReuseIfNecessary();
 	        repeat = true;
 	        adress = "http://motes.at/api/";
-	        settings = getPreferences(0);
+	        settings = PreferenceManager.getDefaultSharedPreferences(context);
 	        settingsEditor = settings.edit();
 	    }
 	
@@ -109,40 +117,62 @@ public class MotesWrapper extends Activity{
 	        return submitModRequest(req);
 	    }
 	
-	    public Boolean Login()
+	    public void Login()
 	    {
+	        new LoginTask().execute();
 	        
-	        try
-	        {
-	        	String req = "?action=login";
-	        	
-	        	URL myUrl = new URL(adress + req);
-	        	HttpURLConnection connection = (HttpURLConnection) myUrl.openConnection();
-	        	
-	        	connection.addRequestProperty("Cache-Control", "no-cache");
-	        	connection.setRequestMethod("POST");
-	        	connection.setDoOutput(true);
-	        	
-	        	DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-	        	wr.writeBytes("user=" + settings.getString("name", "") + "pw=" + settings.getString("pass", ""));
-	        	
-	        	InputStream in = new BufferedInputStream(connection.getInputStream());
-	            String IDres = readInputStream(in);
-	
-	            if (IDres != "Invalid Login!")
-	            {
-	            	settingsEditor.putString("key", IDres);
-	                return true;
-	            } 
-	            else return false;
-	            
-	        }
-	        catch (Exception e)
-	        {
-	            return false;
-	        }
-	
 	    }
+	    
+	    public interface LoginCallbackInterface{
+	    	
+	    	void onLoginFinished(Boolean success);
+	    }
+	    
+	    private class LoginTask extends AsyncTask<Void, Void, Boolean>{
+	    	
+	    	public LoginCallbackInterface del = (LoginCallbackInterface) context;
+	    	
+		    @Override
+		    protected Boolean doInBackground(Void... params) {
+		    	try{
+		    		
+		    		String req = "?action=login";
+		        	
+		        	URL myUrl = new URL(adress + req);
+		        	HttpURLConnection connection = (HttpURLConnection) myUrl.openConnection();
+		        	
+		        	connection.addRequestProperty("Cache-Control", "no-cache");
+		        	connection.setRequestMethod("POST");
+		        	connection.setDoOutput(true);
+		        	
+		        	DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+		        	wr.writeBytes("user=" + settings.getString("name", "") + "pw=" + settings.getString("pass", ""));
+		        	
+		        	InputStream in = new BufferedInputStream(connection.getInputStream());
+		            String IDres = readInputStream(in);
+		            
+		            if (!IDres.equals("Invalid Login!"))
+		            {
+		            	settingsEditor.putString("key", IDres);
+		                return true;
+		            } 
+		            else return false;
+		            
+		    	}
+		    	catch(Exception e){
+		    		Toast.makeText(context, "Login threw an exception", Toast.LENGTH_SHORT).show();
+		    		return false;
+		    	}
+
+		    }
+
+		    @Override
+		    protected void onPostExecute(Boolean result) {
+		               
+		    	del.onLoginFinished(result);
+		    }
+
+		}
 	    
 	    public String readInputStream(InputStream inputStream)
 	    {
@@ -175,36 +205,19 @@ public class MotesWrapper extends Activity{
 		        	connection.addRequestProperty("Cache-Control", "no-cache");
 
 		        	InputStream in = new BufferedInputStream(connection.getInputStream());
-		        	JSONObject jObject = new JSONObject(readInputStream(in));
+		        	MotesObject jObject = (MotesObject) new JSONTokener(readInputStream(in)).nextValue();
 
-	                repeat = true;
-	                return deserializeToMotes(jObject);
+	                //return deserializeToMotes(jObject);
+	                return  jObject;
 	            }
-	            catch (Exception e)
-	            {
-	                if (repeat)
-	                {
-	                    if (Login())
-	                    {
-	                        repeat = false;
-	                        return submitRequest(request);
-	                    }
-	                    else return null;
-	                }
-	                else
-	                {
-	                    repeat = true;
-	                    return null;
-	                }
-	
-	                
-	            }
+	            catch (Exception e){}
+			return null;
 	    }
 	
 	    private MotesObject deserializeToMotes(JSONObject jObject) {
 			MotesObject mobject = new MotesObject();
 			
-			//try every fucking array
+			//try every fucking array. Let's do it another way
 			try{
 				//should throw exception if it wasn't the specified request
 				JSONArray tempArray = jObject.getJSONArray("students");
@@ -213,7 +226,7 @@ public class MotesWrapper extends Activity{
 					
 					for(int i = 0; i<tempArray.length();i++){
 						JSONObject tempObject = tempArray.getJSONObject(i);
-						StudentObject tempSObject = new StudentObject();
+						StudentObject tempSObject = mobject.new StudentObject();
 						
 						tempSObject.id = tempObject.getInt("id");
 						tempSObject.name = tempObject.getString("name");
@@ -227,32 +240,13 @@ public class MotesWrapper extends Activity{
 			}
 			catch(Exception e){}
 			
-			try{
-				//should throw exception if it wasn't the specified request
-				JSONArray tempArray = jObject.getJSONArray("subjects");
-				if(tempArray != null){
-					List<StudentObject> tempStudents = new ArrayList<StudentObject>();
-					
-					for(int i = 0; i<tempArray.length();i++){
-						JSONObject tempObject = tempArray.getJSONObject(i);
-						StudentObject tempSObject = new StudentObject();
-						
-						tempSObject.id = tempObject.getInt("id");
-						tempSObject.name = tempObject.getString("name");
-						
-						tempStudents.add(tempSObject);
-					}
-					
-					mobject.students = tempStudents;
-					return mobject;
-				}
-			}
-			catch(Exception e){}
 			
-			subjects;
-	        teachers;
-	        activities;
-	        notes
+			return mobject;
+			
+			//subjects;
+	        //teachers;
+	        //activities;
+	        //notes
 			
 		}
 
@@ -263,37 +257,16 @@ public class MotesWrapper extends Activity{
 	                String appAuth = "&shortuser=" + settings.getString("mname", "") + "&key=" + settings.getString("key", "");
 	
 	                URL myUrl = new URL(adress+request+appAuth);
-		        	HttpURLConnection connection = (HttpURLConnection) myUrl.openConnection();
-		        	connection.addRequestProperty("Cache-Control", "no-cache");
-
-		        	InputStream in = new BufferedInputStream(connection.getInputStream());
-	                if(readInputStream(in) != "false")
-	                {
-	                    repeat = true;
-	                    return true;
-	                }
-	                else throw new Exception("Wrong");
-	            }
-	            catch (Exception e)
-	            {
-	                if (repeat)
-	                {
-	                    if (Login())
-	                    {
-	                        repeat = !repeat;
-	
-	                        return submitModRequest(request);
-	                    }
-	                    else return false;
-	                }
-	                else
-	                {
-	                    repeat = !repeat;
-	                    return false;
-	                }
-	
 	                
+	                URL[] uarr = new URL[1];
+	                uarr[0] = myUrl;
+	                new ConnectionTask().execute(uarr);
+	                return true;
+		        	
 	            }
+	            catch (Exception e){}
+	        
+	        return false;
 	    }
 
 	private void disableConnectionReuseIfNecessary() {
@@ -303,7 +276,34 @@ public class MotesWrapper extends Activity{
 	   
 	 }}
 
-	
+	private class ConnectionTask extends AsyncTask<URL, Void, Boolean>{
+	    @Override
+	    protected Boolean doInBackground(URL... myUrl) {
+	    	try{
+		    	URL murl = myUrl[0];
+			    HttpURLConnection connection = (HttpURLConnection) murl.openConnection();
+		    	connection.addRequestProperty("Cache-Control", "no-cache");
+		
+		    	InputStream in = new BufferedInputStream(connection.getInputStream());
+		        if(readInputStream(in) != "false")
+		        {
+		            repeat = true;
+		            return true;
+		        }
+		        else throw new Exception("Wrong");
+	    	}
+	    	catch(Exception e){}
+			return true;
+	    }
+
+	    @Override
+	    protected void onPostExecute(Boolean result) {
+	               // result is what you got from your connection
+	    	Toast.makeText(context, result.toString(), Toast.LENGTH_SHORT).show();
+
+	    }
+
+	}
 	
 }
 

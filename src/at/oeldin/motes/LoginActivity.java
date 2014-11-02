@@ -1,14 +1,23 @@
 package at.oeldin.motes;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
+import at.oeldin.motes.MotesWrapper.LoginCallbackInterface;
 
 
 
-public class LoginActivity extends ActionBarActivity {
-
+public class LoginActivity extends ActionBarActivity implements LoginCallbackInterface {
+	
+	private SharedPreferences settings;
+    private SharedPreferences.Editor settingsEditor;
+    private MotesWrapper mrapper;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,25 +29,49 @@ public class LoginActivity extends ActionBarActivity {
         
         setContentView(R.layout.activity_login);
         if (savedInstanceState == null) {
-            
+        	mrapper = new MotesWrapper(this);
+        	settings = PreferenceManager.getDefaultSharedPreferences(this);
+
         }
     }
     
     @Override
     protected void onResume(){
     	
-    	//TODO: check if user data is stored and login
+    	if(settings.contains("key")){
+    		mrapper.Login();
+    	}
     	
+    	super.onResume();
+    }
+    
+    public void onLoginFinished(Boolean success){
     	
+    	if(success){
+        	Intent mainIntent = new Intent(this, MainActivity.class);
+        	startActivity(mainIntent);
+        }
+        else{
+        	Toast.makeText(this, "Login failed", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void loginButtonClicked(View view){
     	
-    	//TODO: login
-    	//TODO: save login to preferences
+        settingsEditor = settings.edit();
+        
+    	EditText nameField = (EditText)findViewById(R.id.name_edit);
+    	EditText passField = (EditText)findViewById(R.id.pass_edit);
     	
-    	Intent mainIntent = new Intent(this, MainActivity.class);
-    	startActivity(mainIntent);
+    	settingsEditor.putString("name", nameField.getText().toString());
+    	settingsEditor.putString("pass", passField.getText().toString());
+    	
+    	if(settingsEditor.commit()){
+    		mrapper.Login();
+    	}
+    	else{
+        	Toast.makeText(this, "Failed to save password", Toast.LENGTH_SHORT).show();
+        }
     	
     }
 
