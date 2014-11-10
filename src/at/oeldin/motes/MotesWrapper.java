@@ -123,14 +123,18 @@ public class MotesWrapper {
 	        
 	    }
 	    
-	    public interface LoginCallbackInterface{
+	    public interface MotesCallbackInterface{
 	    	
 	    	void onLoginFinished(Boolean success);
+	    	void onModRequestFinished(Boolean success);
+	    	void onRequestFinished(MotesObject result);
+	    	void onRequestStatusUpdate(int progress);
+	    	
 	    }
 	    
 	    private class LoginTask extends AsyncTask<Void, Void, Boolean>{
 	    	
-	    	public LoginCallbackInterface del = (LoginCallbackInterface) context;
+	    	public MotesCallbackInterface del = (MotesCalbackCallbackInterface) context;
 	    	
 		    @Override
 		    protected Boolean doInBackground(Void... params) {
@@ -179,7 +183,8 @@ public class MotesWrapper {
 	        try {
 				return new String(readFully(inputStream), "UTF-8");
 			} catch (Exception e) {
-				return "Invalid Login!";
+				//Change this back to returning "Invalid Login!"
+				return "ExceptionWhileReadingStream";
 			}
 	    }    
 
@@ -254,19 +259,14 @@ public class MotesWrapper {
 	    {
 	        try
 	            {
-	                String appAuth = "&shortuser=" + settings.getString("mname", "") + "&key=" + settings.getString("key", "");
-	
-	                URL myUrl = new URL(adress+request+appAuth);
-	                
-	                URL[] uarr = new URL[1];
-	                uarr[0] = myUrl;
-	                new ConnectionTask().execute(uarr);
+	                new ConnectionTask().execute(request);
 	                return true;
 		        	
 	            }
-	            catch (Exception e){}
+	            catch (Exception e){
+	            	return false;
+	            }
 	        
-	        return false;
 	    }
 
 	private void disableConnectionReuseIfNecessary() {
@@ -276,31 +276,38 @@ public class MotesWrapper {
 	   
 	 }}
 
-	private class ConnectionTask extends AsyncTask<URL, Void, Boolean>{
+	private class ConnectionTask extends AsyncTask<String, Void, Boolean>{
+	    
+	    public MotesCallbackInterface del = (MotesCalbackCallbackInterface) context;
+	    
 	    @Override
-	    protected Boolean doInBackground(URL... myUrl) {
+	    protected Boolean doInBackground(String... requests) {
 	    	try{
-		    	URL murl = myUrl[0];
-			    HttpURLConnection connection = (HttpURLConnection) murl.openConnection();
+	    		String mrequest = requests[0];
+		    	String appAuth = "&shortuser=" + settings.getString("mname", "") + "&key=" + settings.getString("key", "");
+	                URL myUrl = new URL(adress+mrequest+appAuth);
+	                
+			HttpURLConnection connection = (HttpURLConnection) myUrl.openConnection();
 		    	connection.addRequestProperty("Cache-Control", "no-cache");
 		
 		    	InputStream in = new BufferedInputStream(connection.getInputStream());
+		    	
 		        if(readInputStream(in) != "false")
 		        {
-		            repeat = true;
 		            return true;
 		        }
 		        else throw new Exception("Wrong");
 	    	}
-	    	catch(Exception e){}
-			return true;
+	    	catch(Exception e){
+	    		return false;
+	    	}
+		
 	    }
 
 	    @Override
 	    protected void onPostExecute(Boolean result) {
-	               // result is what you got from your connection
-	    	Toast.makeText(context, result.toString(), Toast.LENGTH_SHORT).show();
-
+	
+		del.onModRequestFinished(result);
 	    }
 
 	}
