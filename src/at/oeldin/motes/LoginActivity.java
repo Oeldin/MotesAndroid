@@ -12,7 +12,7 @@ import at.oeldin.motes.MotesWrapper.LoginCallbackInterface;
 
 
 
-public class LoginActivity extends ActionBarActivity implements LoginCallbackInterface {
+public class LoginActivity extends ActionBarActivity implements MotesCallbackInterface {
 	
 	private SharedPreferences settings;
     private SharedPreferences.Editor settingsEditor;
