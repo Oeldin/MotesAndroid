@@ -146,7 +146,7 @@ public class StudentA extends ActionBarActivity {
 			Bundle bundle = getArguments(); 
         		int section = bundle.getInt(ARG_SECTION_NUMBER);	
 				
-			View rootView = inflater.inflate(R.layout.fragment_student_detail,
+			View rootView = inflater.inflate(R.layout.fragment_student,
 					container, false);
 			return rootView;
 			

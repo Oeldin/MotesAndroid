@@ -8,7 +8,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-import at.oeldin.motes.MotesWrapper.LoginCallbackInterface;
+import at.oeldin.motes.MotesWrapper.MotesCallbackInterface;
 
 
 
@@ -74,4 +74,23 @@ public class LoginActivity extends ActionBarActivity implements MotesCallbackInt
         }
     	
     }
+
+	@Override
+	public void onModRequestFinished(Boolean success) {
+
+		
+	}
+
+	@Override
+	public void onRequestFinished(MotesObject result) {
+		
+		Toast.makeText(this, result.notes.get(0).text, Toast.LENGTH_SHORT).show();
+		
+	}
+
+	@Override
+	public void onRequestStatusUpdate(int progress) {
+
+		
+	}
 }

@@ -39,7 +39,6 @@ public class MotesWrapper {
 	    	this.context = context;
 	    	this.activity = (Activity) context;
 	    	disableConnectionReuseIfNecessary();
-	        repeat = true;
 	        adress = "http://motes.at/api/";
 	        settings = PreferenceManager.getDefaultSharedPreferences(context);
 	        settingsEditor = settings.edit();
@@ -85,10 +84,10 @@ public class MotesWrapper {
 	        new ConnectionTask().execute(req);
 	    }
 	
-	    public MotesObject GetActivities(int Category, int Student)
+	    public void GetActivities(int Category, int Student)
 	    {
 	        String req = String.format("?action=getactivities&category=%d&student=%d&year=%s", Category, Student, settings.getString("year", DEFAULT_YEAR));
-	        return submitRequest(req);
+	        new ConnectionTask().execute(req);
 	    }
 	
 	    public void SetActivity(int Category, int Student, String Text)
@@ -131,7 +130,7 @@ public class MotesWrapper {
 	    
 	    private class LoginTask extends AsyncTask<Void, Void, Boolean>{
 	    	
-	    	public MotesCallbackInterface del = (MotesCalbackCallbackInterface) context;
+	    	public MotesCallbackInterface del = (MotesCallbackInterface) context;
 	    	
 		    @Override
 		    protected Boolean doInBackground(Void... params) {
@@ -147,7 +146,7 @@ public class MotesWrapper {
 		        	connection.setDoOutput(true);
 		        	
 		        	DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-		        	wr.writeBytes("user=" + settings.getString("name", "") + "pw=" + settings.getString("pass", ""));
+		        	wr.writeBytes("user=" + settings.getString("name", "") + "&pw=" + settings.getString("pass", ""));
 		        	
 		        	InputStream in = new BufferedInputStream(connection.getInputStream());
 		            String IDres = readInputStream(in);
@@ -161,7 +160,6 @@ public class MotesWrapper {
 		            
 		    	}
 		    	catch(Exception e){
-		    		Toast.makeText(context, "Login threw an exception", Toast.LENGTH_SHORT).show();
 		    		return false;
 		    	}
 
@@ -169,7 +167,6 @@ public class MotesWrapper {
 
 		    @Override
 		    protected void onPostExecute(Boolean result) {
-		               
 		    	del.onLoginFinished(result);
 		    }
 
@@ -180,8 +177,7 @@ public class MotesWrapper {
 	        try {
 				return new String(readFully(inputStream), "UTF-8");
 			} catch (Exception e) {
-				//Change this back to returning "Invalid Login!"
-				return "ExceptionWhileReadingStream";
+				return "Invalid Login!";
 			}
 	    }    
 
@@ -241,7 +237,7 @@ public class MotesWrapper {
 
 	private class ModConnectionTask extends AsyncTask<String, Void, Boolean>{
 	    
-	    public MotesCallbackInterface del = (MotesCalbackCallbackInterface) context;
+	    public MotesCallbackInterface del = (MotesCallbackInterface) context;
 	    
 	    @Override
 	    protected Boolean doInBackground(String... requests) {
@@ -275,9 +271,9 @@ public class MotesWrapper {
 
 	}
 	
-	private class ConnectionTask extends AsyncTask<String, int, MotesObject>{
+	private class ConnectionTask extends AsyncTask<String, Integer, MotesObject>{
 	    
-	    public MotesCallbackInterface del = (MotesCalbackCallbackInterface) context;
+	    public MotesCallbackInterface del = (MotesCallbackInterface) context;
 	    
 	    @Override
 	    protected MotesObject doInBackground(String... requests) {
@@ -288,10 +284,15 @@ public class MotesWrapper {
 	                URL myUrl = new URL(adress+mrequest+appAuth);
 		        	HttpURLConnection connection = (HttpURLConnection) myUrl.openConnection();
 		        	connection.addRequestProperty("Cache-Control", "no-cache");
-
+		        	
+		        	publishProgress(1);
 		        	InputStream in = new BufferedInputStream(connection.getInputStream());
-		        	MotesObject jObject = (MotesObject) new JSONTokener(readInputStream(in)).nextValue();
+		        	String jsonString = readInputStream(in);
+		        	
+		        	publishProgress(2);
+		        	MotesObject jObject = (MotesObject) new JSONTokener(jsonString).nextValue();
 
+		        	publishProgress(3);
 	                //return deserializeToMotes(jObject);
 	                return  jObject;
 	    	}
@@ -302,13 +303,13 @@ public class MotesWrapper {
 	    }
 	    
 	    @Override
-	    protected void onProgressUpdate(int status){
-	    	del.onRequestStatusUpdate(status);
+	    protected void onProgressUpdate(Integer... status){
+	    	del.onRequestStatusUpdate(status[0]);
 	    }
 
 	    @Override
 	    protected void onPostExecute(MotesObject result) {
-		del.onRequestFinished(result);
+	    	del.onRequestFinished(result);
 	    }
 
 	}
