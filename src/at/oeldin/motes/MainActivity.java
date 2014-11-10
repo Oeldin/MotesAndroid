@@ -11,12 +11,15 @@ import android.view.MenuItem;
 
 public class MainActivity extends ActionBarActivity{
 	
+	private SharedPreferences settings;
+    	private SharedPreferences.Editor settingsEditor;
+	
 	 @Override
 	    protected void onCreate(Bundle savedInstanceState) {
 	        super.onCreate(savedInstanceState);
 	        setContentView(R.layout.activity_main);
 	        if (savedInstanceState == null) {
-
+			settings = PreferenceManager.getDefaultSharedPreferences(this);
 	        }
 	    }
 
@@ -55,8 +58,14 @@ public class MainActivity extends ActionBarActivity{
 	    }
 
 
-		private void logout() {
-			// TODO Auto-generated method stub
-			
-		}
+	private void logout() {
+		
+		settingsEditor = settings.edit();
+		settingsEditor.remove("key");
+		settingsEditor.commit();
+		
+		Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+	    	startActivity(intent);
+		
+	}
 }
