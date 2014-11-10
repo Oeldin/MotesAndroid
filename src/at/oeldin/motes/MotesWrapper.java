@@ -26,7 +26,7 @@ import at.oeldin.motes.MotesObject.*;
 
 
 public class MotesWrapper {
-	    private Boolean repeat;
+	    //private Boolean repeat;
 	    private String adress;
 	    private SharedPreferences settings;
 	    private SharedPreferences.Editor settingsEditor;
@@ -45,36 +45,36 @@ public class MotesWrapper {
 	        settingsEditor = settings.edit();
 	    }
 	
-	    public MotesObject GetStudents()
+	    public void GetStudents()
 	    {
 	        String req = "?action=getstudents";
-	        return submitRequest(req);
+	        new ConnectionTask().execute(req);
 	    }
-	    public MotesObject GetStudents(int Student)
+	    public void GetStudents(int Student)
 	    {
 	        String req = "?action=getstudents&student="+Student;
-	        return submitRequest(req);
+	        new ConnectionTask().execute(req);
 	    }
 	
-	    public MotesObject GetAllStudents()
+	    public void GetAllStudents()
 	    {
 	        String req = "?action=getallstudents";
-	        return submitRequest(req);
+	        new ConnectionTask().execute(req);
 	    }
 	
-	    public MotesObject GetSubjects()
+	    public void GetSubjects()
 	    {
 	        String req = "?action=getsubjects";
-	        return submitRequest(req);
+	        new ConnectionTask().execute(req);
 	    }
 	
-	    public MotesObject GetTeachers()
+	    public void GetTeachers()
 	    {
 	        String req = "?action=getteachers";
-	        return submitRequest(req);
+	        new ConnectionTask().execute(req);
 	    }
 	
-	    public MotesObject GetNotes(int Teacher, int Student, int Subject)
+	    public void GetNotes(int Teacher, int Student, int Subject)
 	    {
 	        String req = "?action=getnotes&year=" + settings.getString("myear", DEFAULT_YEAR);
 	
@@ -82,9 +82,7 @@ public class MotesWrapper {
 	        if (Student != 0) req += "&student=" + Student;
 	        if (Subject != 0) req += "&subject=" + Subject;
 	
-	        //repeat = false;
-	
-	        return submitRequest(req);
+	        new ConnectionTask().execute(req);
 	    }
 	
 	    public MotesObject GetActivities(int Category, int Student)
@@ -93,34 +91,33 @@ public class MotesWrapper {
 	        return submitRequest(req);
 	    }
 	
-	    public Boolean SetActivity(int Category, int Student, String Text)
+	    public void SetActivity(int Category, int Student, String Text)
 	    {
 	        String req = String.format("?action=setactivity&category=%d&student=%d&year=%s&text=%s", Category, Student, settings.getString("year", DEFAULT_YEAR), Text);
-	        return submitModRequest(req);
+	        new ModConnectionTask().execute(req);
 	    }
 	
-	    public Boolean SetNote(int Subject, int Student, String Text)
+	    public void SetNote(int Subject, int Student, String Text)
 	    {
 	        String req = String.format("?action=setnote&student=%d&subject=%d&year=&s&text=%s", Student, Subject, settings.getString("year", DEFAULT_YEAR), Text);
-	        return submitModRequest(req);
+	        new ModConnectionTask().execute(req);
 	    }
 	
-	    public Boolean DeleteNote(int Note)
+	    public void DeleteNote(int Note)
 	    {
 	        String req = String.format("?action=deletenote&year=%s&note=%d", settings.getString("year", DEFAULT_YEAR), Note);
-	        return submitModRequest(req);
+	        new ModConnectionTask().execute(req);
 	    }
 	
-	    public Boolean DeleteActivity(int Activity)
+	    public void DeleteActivity(int Activity)
 	    {
 	        String req = String.format("?action=deleteactivity&year=%s&activity=%d", settings.getString("year", DEFAULT_YEAR), Activity);
-	        return submitModRequest(req);
+	        new ModConnectionTask().execute(req);
 	    }
 	
 	    public void Login()
 	    {
 	        new LoginTask().execute();
-	        
 	    }
 	    
 	    public interface MotesCallbackInterface{
@@ -198,27 +195,7 @@ public class MotesWrapper {
 	        }
 	        return baos.toByteArray();
 	    }
-	    
-	    private MotesObject submitRequest(String request)
-	    {
-	        try
-	            {
-	                String appAuth = "&shortuser=" + settings.getString("name", "") + "&key=" + settings.getString("key", "");
 
-	                URL myUrl = new URL(adress+request+appAuth);
-		        	HttpURLConnection connection = (HttpURLConnection) myUrl.openConnection();
-		        	connection.addRequestProperty("Cache-Control", "no-cache");
-
-		        	InputStream in = new BufferedInputStream(connection.getInputStream());
-		        	MotesObject jObject = (MotesObject) new JSONTokener(readInputStream(in)).nextValue();
-
-	                //return deserializeToMotes(jObject);
-	                return  jObject;
-	            }
-	            catch (Exception e){}
-			return null;
-	    }
-	
 	    private MotesObject deserializeToMotes(JSONObject jObject) {
 			MotesObject mobject = new MotesObject();
 			
@@ -255,20 +232,6 @@ public class MotesWrapper {
 			
 		}
 
-		Boolean submitModRequest(String request)
-	    {
-	        try
-	            {
-	                new ConnectionTask().execute(request);
-	                return true;
-		        	
-	            }
-	            catch (Exception e){
-	            	return false;
-	            }
-	        
-	    }
-
 	private void disableConnectionReuseIfNecessary() {
 	   // Work around pre-Froyo bugs in HTTP connection reuse.
 	   if (Integer.parseInt(Build.VERSION.SDK) < Build.VERSION_CODES.FROYO) {
@@ -276,7 +239,7 @@ public class MotesWrapper {
 	   
 	 }}
 
-	private class ConnectionTask extends AsyncTask<String, Void, Boolean>{
+	private class ModConnectionTask extends AsyncTask<String, Void, Boolean>{
 	    
 	    public MotesCallbackInterface del = (MotesCalbackCallbackInterface) context;
 	    
@@ -308,6 +271,44 @@ public class MotesWrapper {
 	    protected void onPostExecute(Boolean result) {
 	
 		del.onModRequestFinished(result);
+	    }
+
+	}
+	
+	private class ConnectionTask extends AsyncTask<String, int, MotesObject>{
+	    
+	    public MotesCallbackInterface del = (MotesCalbackCallbackInterface) context;
+	    
+	    @Override
+	    protected MotesObject doInBackground(String... requests) {
+	    	try{
+	    		String mrequest = requests[0];
+		    	String appAuth = "&shortuser=" + settings.getString("name", "") + "&key=" + settings.getString("key", "");
+
+	                URL myUrl = new URL(adress+mrequest+appAuth);
+		        	HttpURLConnection connection = (HttpURLConnection) myUrl.openConnection();
+		        	connection.addRequestProperty("Cache-Control", "no-cache");
+
+		        	InputStream in = new BufferedInputStream(connection.getInputStream());
+		        	MotesObject jObject = (MotesObject) new JSONTokener(readInputStream(in)).nextValue();
+
+	                //return deserializeToMotes(jObject);
+	                return  jObject;
+	    	}
+	    	catch(Exception e){
+	    		return null;
+	    	}
+		
+	    }
+	    
+	    @Override
+	    protected void onProgressUpdate(int status){
+	    	del.onRequestStatusUpdate(status);
+	    }
+
+	    @Override
+	    protected void onPostExecute(MotesObject result) {
+		del.onRequestFinished(result);
 	    }
 
 	}
