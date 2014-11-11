@@ -9,7 +9,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends ActionBarActivity{
+public class MainActivity extends ActionBarActivity implements OnItemSelectedListener{
 	
 	private SharedPreferences settings;
     	private SharedPreferences.Editor settingsEditor;
@@ -21,6 +21,16 @@ public class MainActivity extends ActionBarActivity{
 	        if (savedInstanceState == null) {
 			//settings = PreferenceManager.getDefaultSharedPreferences(this);
 			settings = getSharedPreferences(getString(R.string.preference_key), Context.MODE_PRIVATE);
+			
+			
+			Spinner spinner = (Spinner) findViewById(R.id.year_spinner);
+			// Create an ArrayAdapter using the string array and a default spinner layout
+			ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+			        R.array.spinner_array, android.R.layout.simple_spinner_item);
+			// Specify the layout to use when the list of choices appears
+			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			// Apply the adapter to the spinner
+			spinner.setAdapter(adapter);
 	        }
 	    }
 
@@ -58,7 +68,29 @@ public class MainActivity extends ActionBarActivity{
 
 	    }
 
-
+	    public void onItemSelected(AdapterView<?> parent, View view, 
+	        int pos, long id) {
+	        	
+		    settingsEditor = settings.edit();
+		    
+		    switch(pos){
+		    	case 0:
+		    		settingsEditor.putString("year", "14");
+		    		break;
+		    	case 1:
+		    		settingsEditor.putString("year", "15");
+		    		break;
+		    	default:
+		    		break;
+		    }
+		    
+		    settingsEditor.commit();
+	    }
+	
+	    public void onNothingSelected(AdapterView<?> parent) {
+	        // Another interface callback
+	    }
+	
 	private void logout() {
 		
 		settingsEditor = settings.edit();
