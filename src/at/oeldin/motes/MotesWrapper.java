@@ -40,8 +40,9 @@ public class MotesWrapper {
 	    	this.activity = (Activity) context;
 	    	disableConnectionReuseIfNecessary();
 	        adress = "http://motes.at/api/";
-	        settings = PreferenceManager.getDefaultSharedPreferences(context);
-	        settingsEditor = settings.edit();
+	        //settings = PreferenceManager.getDefaultSharedPreferences(context);
+	        settings = context.getSharedPreferences(getString(R.string.preference_key), Context.MODE_PRIVATE);
+	        
 	    }
 	
 	    public void GetStudents()
@@ -153,7 +154,9 @@ public class MotesWrapper {
 		            
 		            if (!IDres.equals("Invalid Login!"))
 		            {
+		            	settingsEditor = settings.edit();
 		            	settingsEditor.putString("key", IDres);
+		            	settingsEditor.commit();
 		                return true;
 		            } 
 		            else return false;
