@@ -9,8 +9,8 @@
     <string name="login_button_text">Login</string>
     <string name="students_button_text">Students</string>
     <string name="notes_button_text">Notes</string>
-    <string name="year_radio_14_text">2014/15</string>
-    <string name="year_radio_15_text">2015/16</string>
+    <string name="year_14_text">2014/15</string>
+    <string name="year_15_text">2015/16</string>
     <string name="menu_text_logout">Logout</string>
     <string name="menu_text_notes">Notes</string>
     <string name="title_activity_student">Student Details</string>
