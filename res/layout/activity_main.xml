@@ -12,25 +12,13 @@
         android:layout_marginTop="50dp"
         android:text="@string/students_button_text" />
 
-    <RadioGroup
+    <Spinner
+        android:id="@+id/year_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="250dp" >
+        android:layout_marginTop="250dp" />
 
-    <RadioButton
-        android:id="@+id/year_radio_14"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/year_radio_14_text" />
-
-    <RadioButton
-        android:id="@+id/year_radio_15"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="@string/year_radio_15_text" />
-    </RadioGroup>
 
     <Button
         android:id="@+id/notes_button"
