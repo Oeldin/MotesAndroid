@@ -175,6 +175,7 @@ public class StudentA extends ActionBarActivity {
 		settingsEditor.commit();
 		
 		Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 	    	startActivity(intent);
 		
 	}

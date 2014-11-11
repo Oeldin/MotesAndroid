@@ -31,7 +31,6 @@ public class LoginActivity extends ActionBarActivity implements MotesCallbackInt
         setContentView(R.layout.activity_login);
         if (savedInstanceState == null) {
         	mrapper = new MotesWrapper(this);
-        	//settings = PreferenceManager.getDefaultSharedPreferences(this);
         	settings = this.getSharedPreferences(getString(R.string.preference_key), Context.MODE_PRIVATE);
         }
     }

@@ -3,6 +3,7 @@ package at.oeldin.motes;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,12 +13,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.os.Build;
+import at.oeldin.motes.MotesObject.StudentAdapter;
+import at.oeldin.motes.MotesObject.StudentObject;
+import at.oeldin.motes.MotesWrapper.MotesCallbackInterface;
 
 public class AllStudentsActivity extends ActionBarActivity {
 
 	private SharedPreferences settings;
 	private SharedPreferences.Editor settingsEditor;
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -25,9 +32,10 @@ public class AllStudentsActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_all_students);
 		if (savedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
-					.add(R.id.container, new PlaceholderFragment()).commit();
+					.add(R.id.container, new StudentListFragment()).commit();
 			
 			settings = getSharedPreferences(getString(R.string.preference_key), Context.MODE_PRIVATE);
+
 		}
 	}
 
@@ -43,10 +51,20 @@ public class AllStudentsActivity extends ActionBarActivity {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
+		Intent intent;
 		switch(item.getItemId()){
 	    	case R.id.menu_logout:
 	    		logout();
 	    		return true;
+	    		
+        	case R.id.menu_notes:
+        		intent = new Intent(getApplicationContext(), NotesActivity.class);
+    	    	startActivity(intent);
+    	    	return true;
+    	    	
+        	case R.id.menu_students:
+    	    	return true;
+    	    	
 	        default:
 	    		return super.onOptionsItemSelected(item);
         
@@ -56,9 +74,11 @@ public class AllStudentsActivity extends ActionBarActivity {
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
-	public static class PlaceholderFragment extends Fragment {
+	public static class StudentListFragment extends ListFragment implements MotesCallbackInterface {
+		
+		MotesWrapper mWrapper;
 
-		public PlaceholderFragment() {
+		public StudentListFragment() {
 		}
 
 		@Override
@@ -68,6 +88,54 @@ public class AllStudentsActivity extends ActionBarActivity {
 					container, false);
 			return rootView;
 		}
+		
+		 @Override
+		    public void onActivityCreated(Bundle savedInstanceState) {
+		        super.onActivityCreated(savedInstanceState);
+
+				mWrapper = new MotesWrapper(getActivity());
+				mWrapper.GetStudents();
+
+		    }
+
+
+		    @Override
+		    public void onListItemClick(ListView l, View v, int position, long id) {
+		        int studentid =  Integer.parseInt(v.getTag().toString());
+		        
+		    	Intent intent = new Intent(getActivity().getApplicationContext(), StudentA.class);
+		    	intent.putExtra("id", studentid);
+		    	startActivity(intent);
+		        
+		    }
+
+			@Override
+			public void onLoginFinished(Boolean success) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onModRequestFinished(Boolean success) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onRequestFinished(MotesObject result) {
+		       				
+				StudentAdapter myAdapter = result.new StudentAdapter(getActivity(), 0, result.students);
+				
+				// Populate list with our static array of titles.
+		        setListAdapter(myAdapter);
+				
+			}
+
+			@Override
+			public void onRequestStatusUpdate(int progress) {
+
+				
+			}
 	}
 	
 	private void logout() {
@@ -77,6 +145,7 @@ public class AllStudentsActivity extends ActionBarActivity {
 		settingsEditor.commit();
 		
 		Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 	    	startActivity(intent);
 		
 	}

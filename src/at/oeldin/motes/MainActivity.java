@@ -28,7 +28,6 @@ public class MainActivity extends ActionBarActivity implements OnItemSelectedLis
 			//settings = PreferenceManager.getDefaultSharedPreferences(this);
 			settings = getSharedPreferences(getString(R.string.preference_key), Context.MODE_PRIVATE);
 			
-			
 			Spinner spinner = (Spinner) findViewById(R.id.year_spinner);
 			// Create an ArrayAdapter using the string array and a default spinner layout
 			ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -38,6 +37,12 @@ public class MainActivity extends ActionBarActivity implements OnItemSelectedLis
 			// Apply the adapter to the spinner
 			spinner.setAdapter(adapter);
 			spinner.setOnItemSelectedListener(this);
+			
+			if(settings.contains("year")){
+				if(settings.getString("year", "14").equals("15")){
+					spinner.setSelection(1);
+				}
+			}
 	        }
 	    }
 
@@ -54,10 +59,19 @@ public class MainActivity extends ActionBarActivity implements OnItemSelectedLis
 	        // Handle action bar item clicks here. The action bar will
 	        // automatically handle clicks on the Home/Up button, so long
 	        // as you specify a parent activity in AndroidManifest.xml.
+	    	Intent intent;
 	        switch(item.getItemId()){
 	        	case R.id.menu_logout:
 	        		logout();
 	        		return true;
+	        	case R.id.menu_notes:
+	        		intent = new Intent(getApplicationContext(), NotesActivity.class);
+	    	    	startActivity(intent);
+	    	    	return true;
+	        	case R.id.menu_students:
+	        		intent = new Intent(getApplicationContext(), AllStudentsActivity.class);
+	    	    	startActivity(intent);
+	    	    	return true;
 		        default:
 	        		return super.onOptionsItemSelected(item);
 		        
@@ -105,6 +119,7 @@ public class MainActivity extends ActionBarActivity implements OnItemSelectedLis
 		settingsEditor.commit();
 		
 		Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 	    	startActivity(intent);
 		
 	}

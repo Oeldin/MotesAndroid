@@ -15,28 +15,38 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        
         <activity
             android:name=".LoginActivity"
-            android:label="@string/app_name" >
+            android:label="@string/title_activity_login" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" >
+        
+        <activity 
+            android:name=".MainActivity"
+            android:label="@string/app_name">
         </activity>
+        
         <activity
             android:name=".StudentA"
             android:label="@string/title_activity_student" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="at.oeldin.motes.MainActivity" />
+                android:value="at.oeldin.motes.AllStudentsActivity" />
         </activity>
+        
         <activity
             android:name=".NotesActivity"
             android:label="@string/title_activity_notes" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="at.oeldin.motes.MainActivity" />
         </activity>
+        
         <activity
             android:name=".AllStudentsActivity"
             android:label="@string/title_activity_all_students" >

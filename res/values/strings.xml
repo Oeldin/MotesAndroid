@@ -21,12 +21,16 @@
     <string name="title_section3">Kunst</string>
     <string name="title_section4">Smileys</string>
     <string name="title_section5">Manager</string>
-    <string name="title_activity_notes">NotesActivity</string>
-    <string name="title_activity_all_students">AllStudentsActivity</string>
+    <string name="title_activity_notes">Notes</string>
+    <string name="title_activity_all_students">Students</string>
     <string name="preference_key">eu.oeldin.motes.MY_UNIQUE_PREFERENCE_FILE_KEY</string>
 
     <string-array name="spinner_array">
         <item>2014/15</item>
         <item>2015/16</item>
     </string-array>
+    <string name="title_activity_login">Login</string>
+    <string name="lable_welcome">Welcome to Motes</string>
+    <string name="lable_welcome_sub">Please select an item from the Application Bar above.</string>
+    <string name="lable_no_notes">Sorry, there are no items to display.</string>
 </resources>
