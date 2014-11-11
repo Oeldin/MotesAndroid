@@ -3,10 +3,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="at.oeldin.motes.StudentA" >
 
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never"/>
+    <item 
+        android:id="@+id/menu_notes" 
+        android:title="@string/menu_text_notes" 
+        app:showAsAction="ifRoom|withText" 
+        android:icon="@drawable/ic_action_lables">
+    </item>
+    
+    <item 
+        android:id="@+id/menu_students" 
+        android:title="@string/menu_text_students" 
+        app:showAsAction="ifRoom|withText" 
+        android:icon="@drawable/ic_action_group">
+    </item>
+    
+    <item 
+        android:id="@+id/menu_add" 
+        android:title="@string/menu_text_add" 
+        app:showAsAction="ifRoom|withText" 
+        android:icon="@drawable/ic_action_new">
+    </item>
+    
+    <item 
+        android:id="@+id/menu_logout" 
+        android:title="@string/menu_text_logout" 
+        app:showAsAction="never">
+    </item>
 
 </menu>
