@@ -19,7 +19,8 @@ public class MainActivity extends ActionBarActivity{
 	        super.onCreate(savedInstanceState);
 	        setContentView(R.layout.activity_main);
 	        if (savedInstanceState == null) {
-			settings = PreferenceManager.getDefaultSharedPreferences(this);
+			//settings = PreferenceManager.getDefaultSharedPreferences(this);
+			settings = getSharedPreferences(getString(R.string.preference_key), Context.MODE_PRIVATE);
 	        }
 	    }
 
