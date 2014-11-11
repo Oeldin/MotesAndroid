@@ -14,7 +14,7 @@ import at.oeldin.motes.MotesWrapper.MotesCallbackInterface;
 
 public class LoginActivity extends ActionBarActivity implements MotesCallbackInterface {
 	
-	private SharedPreferences settings;
+    private SharedPreferences settings;
     private SharedPreferences.Editor settingsEditor;
     private MotesWrapper mrapper;
     
@@ -30,8 +30,8 @@ public class LoginActivity extends ActionBarActivity implements MotesCallbackInt
         setContentView(R.layout.activity_login);
         if (savedInstanceState == null) {
         	mrapper = new MotesWrapper(this);
-        	settings = PreferenceManager.getDefaultSharedPreferences(this);
-
+        	//settings = PreferenceManager.getDefaultSharedPreferences(this);
+		settings = this.getSharedPreferences(getString(R.string.preference_key), Context.MODE_PRIVATE);
         }
     }
     
@@ -83,8 +83,6 @@ public class LoginActivity extends ActionBarActivity implements MotesCallbackInt
 
 	@Override
 	public void onRequestFinished(MotesObject result) {
-		
-		Toast.makeText(this, result.notes.get(0).text, Toast.LENGTH_SHORT).show();
 		
 	}
 
