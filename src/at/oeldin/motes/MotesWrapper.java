@@ -41,7 +41,7 @@ public class MotesWrapper {
 	    	disableConnectionReuseIfNecessary();
 	        adress = "http://motes.at/api/";
 	        //settings = PreferenceManager.getDefaultSharedPreferences(context);
-	        settings = context.getSharedPreferences(getString(R.string.preference_key), Context.MODE_PRIVATE);
+	        settings = context.getSharedPreferences(context.getString(R.string.preference_key), Context.MODE_PRIVATE);
 	        
 	    }
 	

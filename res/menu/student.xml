@@ -7,7 +7,7 @@
         android:id="@+id/menu_notes" 
         android:title="@string/menu_text_notes" 
         app:showAsAction="ifRoom|withText" 
-        android:icon="@drawable/ic_action_lables">
+        android:icon="@drawable/ic_action_labels">
     </item>
     
     <item 

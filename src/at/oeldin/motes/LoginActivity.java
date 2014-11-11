@@ -1,5 +1,6 @@
 package at.oeldin.motes;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -31,7 +32,7 @@ public class LoginActivity extends ActionBarActivity implements MotesCallbackInt
         if (savedInstanceState == null) {
         	mrapper = new MotesWrapper(this);
         	//settings = PreferenceManager.getDefaultSharedPreferences(this);
-		settings = this.getSharedPreferences(getString(R.string.preference_key), Context.MODE_PRIVATE);
+        	settings = this.getSharedPreferences(getString(R.string.preference_key), Context.MODE_PRIVATE);
         }
     }
     

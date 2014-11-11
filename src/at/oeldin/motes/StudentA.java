@@ -8,6 +8,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.Gravity;
@@ -20,6 +23,11 @@ import android.widget.TextView;
 
 public class StudentA extends ActionBarActivity {
 
+	
+	private SharedPreferences settings;
+	private SharedPreferences.Editor settingsEditor;
+	
+	
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a {@link FragmentPagerAdapter}
@@ -47,6 +55,8 @@ public class StudentA extends ActionBarActivity {
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
+		
+		settings = getSharedPreferences(getString(R.string.preference_key), Context.MODE_PRIVATE);
 
 	}
 
@@ -62,11 +72,14 @@ public class StudentA extends ActionBarActivity {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
+		switch(item.getItemId()){
+    	case R.id.menu_logout:
+    		logout();
+    		return true;
+        default:
+    		return super.onOptionsItemSelected(item);
+    
 		}
-		return super.onOptionsItemSelected(item);
 	}
 
 	/**
@@ -153,6 +166,17 @@ public class StudentA extends ActionBarActivity {
 			
 		
 		}
+	}
+	
+	private void logout() {
+		
+		settingsEditor = settings.edit();
+		settingsEditor.remove("key");
+		settingsEditor.commit();
+		
+		Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+	    	startActivity(intent);
+		
 	}
 
 }

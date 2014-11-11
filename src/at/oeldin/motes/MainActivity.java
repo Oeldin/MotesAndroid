@@ -1,6 +1,7 @@
 package at.oeldin.motes;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,10 +9,15 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 public class MainActivity extends ActionBarActivity implements OnItemSelectedListener{
 	
-	private SharedPreferences settings;
+		private SharedPreferences settings;
     	private SharedPreferences.Editor settingsEditor;
 	
 	 @Override
@@ -39,7 +45,7 @@ public class MainActivity extends ActionBarActivity implements OnItemSelectedLis
 	    @Override
 	    public boolean onCreateOptionsMenu(Menu menu) {
 	        // Inflate the menu; this adds items to the action bar if it is present.
-	        getMenuInflater().inflate(R.menu.std_m, menu);
+	        getMenuInflater().inflate(R.menu.main, menu);
 	        return true;
 	    }
 	    
