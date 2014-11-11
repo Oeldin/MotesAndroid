@@ -11,6 +11,9 @@
     <string name="notes_button_text">Notes</string>
     <string name="menu_text_logout">Logout</string>
     <string name="menu_text_notes">Notes</string>
+    <string name="menu_text_students">Students</string>
+    <string name="menu_text_addnote">New note</string>
+    <string name="menu_text_add">New entry</string>
     <string name="title_activity_student">Student Details</string>
     <string name="title_section6">Praktikum</string>
     <string name="title_section1">Historische Studien</string>
