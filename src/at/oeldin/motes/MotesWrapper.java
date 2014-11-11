@@ -76,7 +76,7 @@ public class MotesWrapper {
 	
 	    public void GetNotes(int Teacher, int Student, int Subject)
 	    {
-	        String req = "?action=getnotes&year=" + settings.getString("myear", DEFAULT_YEAR);
+	        String req = "?action=getnotes&year=" + settings.getString("year", DEFAULT_YEAR);
 	
 	        if (Teacher != 0) req += "&teacher=" + Teacher;
 	        if (Student != 0) req += "&student=" + Student;
