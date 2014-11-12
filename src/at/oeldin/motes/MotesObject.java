@@ -60,23 +60,24 @@ public class MotesObject {
 
                     inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-                } catch (Exception e) {
-
-                }
+                } catch (Exception e) {}
             }
 
             public View getView(int position, View convertView, ViewGroup parent) {
-                View vi = convertView;
+                View rowView = convertView;
+        
                 try {
-
-                    vi = inflater.inflate(R.layout.listitem_student, null);
-
-                    TextView display_name = (TextView) vi.findViewById(R.id.listitem_student_name);
+                        
+                    if(rowView.equals(null)) rowView = inflater.inflate(R.layout.listitem_student, null);
+        
+                    TextView display_name = (TextView) rowView.findViewById(R.id.listitem_student_name);
                     display_name.setText(lStudent.get(position).name);
-                    vi.setTag(lStudent.get(position).id);
-
+                    rowView.setTag(lStudent.get(position).id);
+        
                 } catch (Exception e) {}
-                return vi;
+        
+                
+                return rowView;
             }
         }
  
