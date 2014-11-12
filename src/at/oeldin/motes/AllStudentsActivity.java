@@ -120,21 +120,20 @@ public class AllStudentsActivity extends ActionBarActivity implements MotesCallb
 	
 	@Override
 	public void onLoginFinished(Boolean success) {
-		// TODO Auto-generated method stub
+
 		
 	}
 
 	@Override
 	public void onModRequestFinished(Boolean success) {
-		// TODO Auto-generated method stub
+
 				
 	}
 
 	@Override
 	public void onRequestFinished(MotesObject result) {
 		
-		StudentListFragment fragment = (StudentListFragment) getFragmentManager().findFragmentById(R.id.fragment);		
-				
+		StudentListFragment fragment = (StudentListFragment) getSupportFragmentManager().findFragmentById(R.id.container);
 		fragment.setMyListAdapter(result);		
 	}
 
