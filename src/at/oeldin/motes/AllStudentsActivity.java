@@ -20,7 +20,7 @@ import at.oeldin.motes.MotesObject.StudentAdapter;
 import at.oeldin.motes.MotesObject.StudentObject;
 import at.oeldin.motes.MotesWrapper.MotesCallbackInterface;
 
-public class AllStudentsActivity extends ActionBarActivity {
+public class AllStudentsActivity extends ActionBarActivity implements MotesCallbackInterface {
 
 	private SharedPreferences settings;
 	private SharedPreferences.Editor settingsEditor;
@@ -74,7 +74,7 @@ public class AllStudentsActivity extends ActionBarActivity {
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
-	public static class StudentListFragment extends ListFragment implements MotesCallbackInterface {
+	public static class StudentListFragment extends ListFragment {
 		
 		MotesWrapper mWrapper;
 
@@ -109,33 +109,38 @@ public class AllStudentsActivity extends ActionBarActivity {
 		        
 		    }
 
-			@Override
-			public void onLoginFinished(Boolean success) {
-				// TODO Auto-generated method stub
-				
-			}
+			
+			
+		public void setMyListAdapter(MotesObject result){
+			
+			StudentAdapter myAdapter = result.new StudentAdapter(getActivity(), 0, result.students);
+		       	setListAdapter(myAdapter);
+		}
+	}
+	
+	@Override
+	public void onLoginFinished(Boolean success) {
+		// TODO Auto-generated method stub
+		
+	}
 
-			@Override
-			public void onModRequestFinished(Boolean success) {
-				// TODO Auto-generated method stub
+	@Override
+	public void onModRequestFinished(Boolean success) {
+		// TODO Auto-generated method stub
 				
-			}
+	}
 
-			@Override
-			public void onRequestFinished(MotesObject result) {
-		       				
-				StudentAdapter myAdapter = result.new StudentAdapter(getActivity(), 0, result.students);
+	@Override
+	public void onRequestFinished(MotesObject result) {
+		
+		StudentListFragment fragment = (StudentListFragment) getFragmentManager().findFragmentById(R.id.fragment);		
 				
-				// Populate list with our static array of titles.
-		        setListAdapter(myAdapter);
-				
-			}
+		fragment.setMyListAdapter(result);		
+	}
 
-			@Override
-			public void onRequestStatusUpdate(int progress) {
+	@Override
+	public void onRequestStatusUpdate(int progress) {
 
-				
-			}
 	}
 	
 	private void logout() {
