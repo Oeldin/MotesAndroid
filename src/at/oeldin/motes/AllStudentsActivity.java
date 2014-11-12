@@ -24,6 +24,7 @@ public class AllStudentsActivity extends ActionBarActivity implements MotesCallb
 
 	private SharedPreferences settings;
 	private SharedPreferences.Editor settingsEditor;
+	private ProgressDialog pDia;
 
 	
 	@Override
@@ -35,7 +36,8 @@ public class AllStudentsActivity extends ActionBarActivity implements MotesCallb
 					.add(R.id.container, new StudentListFragment()).commit();
 			
 			settings = getSharedPreferences(getString(R.string.preference_key), Context.MODE_PRIVATE);
-
+			
+			pDia = new ProgressDialog(this, ProgressDialog.STYLE_HORIZONTAL);
 		}
 	}
 
@@ -95,7 +97,11 @@ public class AllStudentsActivity extends ActionBarActivity implements MotesCallb
 
 				mWrapper = new MotesWrapper(getActivity());
 				mWrapper.GetStudents();
-
+				
+				pDia.setMessage("Loading Students...");
+				pDia.setMax(99);
+				pDia.setProgress(0);
+				pDia.show();
 		    }
 
 
@@ -134,12 +140,14 @@ public class AllStudentsActivity extends ActionBarActivity implements MotesCallb
 	public void onRequestFinished(MotesObject result) {
 		
 		StudentListFragment fragment = (StudentListFragment) getSupportFragmentManager().findFragmentById(R.id.container);
-		fragment.setMyListAdapter(result);		
+		fragment.setMyListAdapter(result);
+		
+		pDia.dismiss();
 	}
 
 	@Override
 	public void onRequestStatusUpdate(int progress) {
-
+		pDia.setProgress(progress*33);
 	}
 	
 	private void logout() {
