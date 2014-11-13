@@ -26,6 +26,7 @@ public class StudentA extends ActionBarActivity {
 	
 	private SharedPreferences settings;
 	private SharedPreferences.Editor settingsEditor;
+	private int StudentID;
 	
 	
 	/**
@@ -45,6 +46,10 @@ public class StudentA extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		StudentID = getIntent().getIntExtra("id", 0);
+		if(StudentID == 0) Toast.makeText(this, "Invalid Student", Toast.LENGTH_SHORT).show();
+		
 		setContentView(R.layout.activity_student);
 
 		// Create the adapter that will return a fragment for each of the three
