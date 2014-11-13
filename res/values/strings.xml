@@ -23,7 +23,7 @@
     <string name="title_section5">Manager</string>
     <string name="title_activity_notes">Notes</string>
     <string name="title_activity_all_students">Students</string>
-    <string name="preference_key">eu.oeldin.motes.MY_UNIQUE_PREFERENCE_FILE_KEY</string>
+    <string name="preference_key">at.oeldin.motes.MY_UNIQUE_PREFERENCE_FILE_KEY</string>
 
     <string-array name="spinner_array">
         <item>2014/15</item>
