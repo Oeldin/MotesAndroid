@@ -68,9 +68,9 @@ public class MotesObject {
         
                 try {
                         
-                    if(rowView.equals(null)) rowView = inflater.inflate(R.layout.listitem_student, null);
+                    if(rowView.equals(null)) rowView = inflater.inflate(android.R.layout.simple_list_item_1, null);
         
-                    TextView display_name = (TextView) rowView.findViewById(R.id.listitem_student_name);
+                    TextView display_name = (TextView) rowView.findViewById(android.R.id.text1);
                     display_name.setText(lStudent.get(position).name);
                     rowView.setTag(lStudent.get(position).id);
         
