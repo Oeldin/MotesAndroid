@@ -13,10 +13,7 @@ import android.widget.TextView;
 
 public class MotesObject {
 
-        public List<UniversalObject> students;
-        public List<UniversalObject> subjects;
-        public List<UniversalObject> teachers;
-        public List<UniversalObject> activities;
+        public List<UniversalObject> stuff;
         public List<NoteObject> notes;
         
         public class UniversalObject {
