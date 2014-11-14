@@ -37,12 +37,11 @@ public class LoginActivity extends ActionBarActivity implements MotesCallbackInt
     
     @Override
     protected void onResume(){
+    	super.onResume();
     	
     	if(settings.contains("key")){
     		mrapper.Login();
     	}
-    	
-    	super.onResume();
     }
     
     public void onLoginFinished(Boolean success){
