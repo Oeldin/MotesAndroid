@@ -13,30 +13,20 @@ import android.widget.TextView;
 
 public class MotesObject {
 
-        public List<StudentObject> students;
-        public List<SubjectObject> subjects;
-        public List<TeacherObject> teachers;
-        public List<ActivityObject> activities;
+        public List<UniversalObject> students;
+        public List<UniversalObject> subjects;
+        public List<UniversalObject> teachers;
+        public List<UniversalObject> activities;
         public List<NoteObject> notes;
         
-        public class StudentObject {
+        public class UniversalObject {
             public int id;
             public String name;
-        }
-        
-        public class SubjectObject {
-        	public int id;
-            public String name;
-        }
-        
-        public class TeacherObject {
-            public int id;
-            public String name;
-        }
-        
-        public class ActivityObject {
-            public int id;
-            public String text;
+            
+            UniversalObject(int id, String name){
+                    this.id = id;
+                    this.name = name;
+            }
         }
         
         public class NoteObject {
@@ -44,6 +34,14 @@ public class MotesObject {
             public String text;
             public String teacher;
             public String created;
+            
+            NoteObject(int id, String text, String teacher, String created){
+                this.id = id;
+                this.text = text;
+                this.teacher = teacher;
+                this.created = created;
+            }
+            
         }
         
         public class StudentAdapter extends ArrayAdapter<StudentObject> {
