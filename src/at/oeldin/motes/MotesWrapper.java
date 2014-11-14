@@ -198,36 +198,53 @@ public class MotesWrapper {
 	    private MotesObject deserializeToMotes(JSONObject jObject) {
 			MotesObject mobject = new MotesObject();
 			
-			//try every fucking array. Let's do it another way
+			
 			try{
-				//should throw exception if it wasn't the specified request
-				JSONArray tempArray = jObject.getJSONArray("students");
-				if(tempArray != null){
-					List<StudentObject> tempStudents = new ArrayList<StudentObject>();
+				String mappedKey = (jObject.names()[0]).toString();
+				
+				JSONArray tempArray = jObject.getJSONArray(mappedKey);
+				
+				if(tempArray != null && !mappedKey.equals("notes")){
+					List<UniversalObject> tempList = new ArrayList<UniversalObject>();
 					
 					for(int i = 0; i<tempArray.length();i++){
 						JSONObject tempObject = tempArray.getJSONObject(i);
-						StudentObject tempSObject = mobject.new StudentObject();
-						
-						tempSObject.id = tempObject.getInt("id");
-						tempSObject.name = tempObject.getString("name");
-						
-						tempStudents.add(tempSObject);
+
+						tempList.add(
+							mobject.new UniversalObject(
+								tempObject.getInt("id"), 
+								tempObject.getString("name")
+								)
+							);
 					}
 					
-					mobject.students = tempStudents;
+					mobject.stuff = tempList;
 					return mobject;
 				}
+				else if(mappedKey.equals("notes")){
+					List<NotesObject> tempList = new ArrayList<NotesObject>();
+					
+					for(int i = 0; i<tempArray.length();i++){
+						JSONObject tempObject = tempArray.getJSONObject(i);
+
+						tempList.add(
+							mobject.new NotesObject(
+								tempObject.getInt("id"), 
+								tempObject.getString("text"),
+								tempObject.getString("teacher"),
+								tempObject.getString("created")
+								)
+							);
+					}
+					
+					mobject.notes = tempList;
+					return mobject;
+				}
+				else return null;
 			}
-			catch(Exception e){}
-			
-			
-			return mobject;
-			
-			//subjects;
-	        //teachers;
-	        //activities;
-	        //notes
+			catch(Exception e){
+				return null;
+			}
 			
 		}
 
@@ -293,8 +310,17 @@ public class MotesWrapper {
 		        	String jsonString = readInputStream(in);
 		        	
 		        	publishProgress(2);
-		        	MotesObject jObject = (MotesObject) new JSONTokener(jsonString).nextValue();
+		        	//JSONObject jObject = new JSONObject(jsonString);
 
+				
+				//create pseudo Object for debugging purposes
+
+				MotesObject jObject = new MotesObject();
+				jObject.students = new ArrayList<UniversalObject>(){
+					add(new UniversalObject(20, "First Student"));
+					add(new UniversalObject(21, "Second Student"));
+				}
+				
 		        	publishProgress(3);
 	                //return deserializeToMotes(jObject);
 	                return  jObject;
