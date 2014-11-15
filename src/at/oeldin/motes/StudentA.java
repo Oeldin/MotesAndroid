@@ -35,6 +35,9 @@ public class StudentA extends ActionBarActivity implements MotesCallbackInterfac
 	private int StudentID;
 	private ProgressDialog pDia;
 	private String newActivity;
+	private StuffAdapter[] mAdapters;
+	private int adapterStatus;
+	private int stateBeforeReload;
 	
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -58,20 +61,24 @@ public class StudentA extends ActionBarActivity implements MotesCallbackInterfac
 		if(StudentID == 0) Toast.makeText(this, "Invalid Student", Toast.LENGTH_SHORT).show();
 		
 		setContentView(R.layout.activity_student);
-
-		// Create the adapter that will return a fragment for each of the three
-		// primary sections of the activity.
-		mSectionsPagerAdapter = new SectionsPagerAdapter(
-				getSupportFragmentManager(), this);
-
-		// Set up the ViewPager with the sections adapter.
-		mViewPager = (ViewPager) findViewById(R.id.pager);
-		mViewPager.setAdapter(mSectionsPagerAdapter);
-		
+		setupProgressDialog();
 		settings = getSharedPreferences(getString(R.string.preference_key), Context.MODE_PRIVATE);
 		newActivity = "";
+		adapterStatus = 0;
+		mAdapters = new StuffAdapter[6];
+		initializeAllAdapters();
+		stateBeforeReload = 0;
 		
 	}
+
+	private void initializeAllAdapters() {
+		
+		MotesWrapper mWrapper = new MotesWrapper(this);
+		
+		mWrapper.GetActivities(adapterStatus, StudentID);
+		
+	}
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -121,6 +128,11 @@ public class StudentA extends ActionBarActivity implements MotesCallbackInterfac
         		    	
         		        newActivity = input.getText().toString();
         		        myWrapper.SetActivity(mViewPager.getCurrentItem(), StudentID, newActivity);
+        		        
+        		        setupProgressDialog();
+        				adapterStatus = 0;
+        				stateBeforeReload = mViewPager.getCurrentItem();
+        				initializeAllAdapters();
         		    }
         		});
         		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -156,7 +168,7 @@ public class StudentA extends ActionBarActivity implements MotesCallbackInterfac
 		@Override
 		public Fragment getItem(int position) {
 			
-			pDia = new ProgressDialog(context, ProgressDialog.STYLE_HORIZONTAL);
+
 			
 			//Toast.makeText(context, "getItem called: " + position, Toast.LENGTH_SHORT).show();
 			// getItem is called to instantiate the fragment for the given page.
@@ -180,14 +192,12 @@ public class StudentA extends ActionBarActivity implements MotesCallbackInterfac
 	 */
 	public static class StudentDetailFragment extends ListFragment {
 		
-		MotesWrapper mWrapper;
 		
 		/**
 		 * The fragment argument representing the section number for this
 		 * fragment.
 		 */
 		private static final String ARG_SECTION_NUMBER = "section_number";
-		private static final String ARG_STUDENT_NUMBER = "student_number";
 
 		/**
 		 * Returns a new instance of this fragment for the given section number.
@@ -196,7 +206,6 @@ public class StudentA extends ActionBarActivity implements MotesCallbackInterfac
 			StudentDetailFragment fragment = new StudentDetailFragment();
 			Bundle args = new Bundle();
 			args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-			args.putInt(ARG_STUDENT_NUMBER, studentID);
 			fragment.setArguments(args);
 			return fragment;
 		}
@@ -210,22 +219,11 @@ public class StudentA extends ActionBarActivity implements MotesCallbackInterfac
 
 			View rootView = inflater.inflate(R.layout.fragment_student,
 					container, false);
-			return rootView;
-			
-		}
-		
-		@Override
-	    public void onActivityCreated(Bundle savedInstanceState) {
-	        super.onActivityCreated(savedInstanceState);
-
-			mWrapper = new MotesWrapper(getActivity());
 			
 			Bundle bundle = getArguments(); 
-    		int section = bundle.getInt(ARG_SECTION_NUMBER);	
-    		int student = bundle.getInt(ARG_STUDENT_NUMBER);
-    		mWrapper.GetActivities(section, student);
+    		int section = bundle.getInt(ARG_SECTION_NUMBER);
 			
-			TextView titleView = (TextView) getActivity().findViewById(R.id.section_label);
+			TextView titleView = (TextView) rootView.findViewById(R.id.section_label);
 			
 			Locale l = Locale.getDefault();
 			String title;
@@ -256,28 +254,27 @@ public class StudentA extends ActionBarActivity implements MotesCallbackInterfac
 			titleView.setText(title);
 			
 			
-			((StudentA) getActivity()).setupProgressDialog();
+			return rootView;
+			
+		}
+		
+		@Override
+	    public void onActivityCreated(Bundle savedInstanceState) {
+	        super.onActivityCreated(savedInstanceState);
+
+			
+			Bundle bundle = getArguments(); 
+    		int section = bundle.getInt(ARG_SECTION_NUMBER);
+    		
+    		try{
+    			StuffAdapter tAdapter = ((StudentA) getActivity()).mAdapters[section];
+    			setListAdapter(tAdapter);
+    		}
+    		catch(Exception e){}
+    		
 			
 	    }
 
-		//Nothing should happen when clicking on an activity
-	    /*@Override
-	    public void onListItemClick(ListView l, View v, int position, long id) {
-	        int studentid =  Integer.parseInt(v.getTag().toString());
-	        
-	    	Intent intent = new Intent(getActivity().getApplicationContext(), StudentA.class);
-	    	intent.putExtra("id", studentid);
-	    	startActivity(intent);
-	        
-	    }*/
-
-		
-		
-		public void setMyListAdapter(MotesObject result){
-				
-			StuffAdapter myAdapter = result.new StuffAdapter(getActivity(), 0, result.stuff);
-		    setListAdapter(myAdapter);
-		}
 	}
 	
 	private void logout() {
@@ -310,17 +307,28 @@ public class StudentA extends ActionBarActivity implements MotesCallbackInterfac
 
 	@Override
 	public void onRequestFinished(MotesObject result) {
-
 		
-		if(result == null) Toast.makeText(this, "No activities", Toast.LENGTH_SHORT).show();
-		else{
-			StudentDetailFragment fragment = (StudentDetailFragment) getSupportFragmentManager()
-					.findFragmentByTag(makeFragmentName(
-							R.id.pager, 
-							mViewPager.getCurrentItem()));
-			fragment.setMyListAdapter(result);
+		if(!(result == null)){
+			StuffAdapter tempAdapter = result.new StuffAdapter(this, 0, result.stuff);
+			mAdapters[adapterStatus] = tempAdapter;
+
 		}
-		pDia.dismiss();
+		
+		if(adapterStatus < 5){
+			adapterStatus++;
+			initializeAllAdapters();
+		}
+		else{
+			 pDia.dismiss();
+			 
+			 mSectionsPagerAdapter = new SectionsPagerAdapter(
+						getSupportFragmentManager(), this);
+
+			mViewPager = (ViewPager) findViewById(R.id.pager);
+			mViewPager.setAdapter(mSectionsPagerAdapter);
+			
+			mViewPager.setCurrentItem(stateBeforeReload);
+		}
 		
 	}
 
@@ -331,14 +339,11 @@ public class StudentA extends ActionBarActivity implements MotesCallbackInterfac
 	}
 	
 	public void setupProgressDialog(){
+		pDia = new ProgressDialog(this, ProgressDialog.STYLE_HORIZONTAL);
 		pDia.setMessage("Loading Activities...");
 		pDia.setMax(99);
 		pDia.setProgress(0);
 		pDia.show();
-	}
-	
-	private static String makeFragmentName(int viewId, int index) {
-	     return "android:switcher:" + viewId + ":" + index;
 	}
 	
 }
