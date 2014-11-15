@@ -240,7 +240,8 @@ public class MotesWrapper {
 								tempObject.getInt("id"), 
 								tempObject.getString("text"),
 								tempObject.getString("teacher"),
-								tempObject.getString("created")
+								tempObject.getString("created"),
+								tempObject.getString("student")
 								)
 							);
 					}

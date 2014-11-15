@@ -30,12 +30,14 @@ public class MotesObject {
             public String text;
             public String teacher;
             public String created;
+            public String student;
             
-            NoteObject(int id, String text, String teacher, String created){
+            NoteObject(int id, String text, String teacher, String created, String student){
                 this.id = id;
                 this.text = text;
                 this.teacher = teacher;
                 this.created = created;
+                this.student = student;
             }
             
         }
@@ -98,10 +100,12 @@ public class MotesObject {
                     TextView display_text = (TextView) rowView.findViewById(R.id.listitem_note_text);
                     TextView display_teacher = (TextView) rowView.findViewById(R.id.listitem_note_teacher);
                     TextView display_date = (TextView) rowView.findViewById(R.id.listitem_note_date);
+                    TextView display_student = (TextView) rowView.findViewById(R.id.listitem_note_student);
                     
                     display_text.setText(lNote.get(position).text);
                     display_teacher.setText(lNote.get(position).teacher);
                     display_date.setText(lNote.get(position).created);
+                    display_student.setText(lNote.get(position).student);
                     
                     rowView.setTag(lNote.get(position).id);
         
