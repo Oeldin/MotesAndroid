@@ -1,6 +1,5 @@
 package at.oeldin.motes;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -42,7 +41,6 @@ public class MotesObject {
         }
         
         public class StuffAdapter extends ArrayAdapter<UniversalObject> {
-            private Activity activity;
             private List<UniversalObject> lStuff;
             private LayoutInflater inflater = null;
 
@@ -50,7 +48,6 @@ public class MotesObject {
                 super(activity, textViewResourceId, stuff);
                 
                 try {
-                    this.activity = activity;
                     this.lStuff = stuff;
 
                     inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -63,7 +60,7 @@ public class MotesObject {
         
                 try {
                         
-                    if(rowView.equals(null)) rowView = inflater.inflate(android.R.layout.simple_list_item_1, null);
+                    if(rowView == null) rowView = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
         
                     TextView display_name = (TextView) rowView.findViewById(android.R.id.text1);
                     display_name.setText(lStuff.get(position).name);
@@ -77,7 +74,6 @@ public class MotesObject {
         }
         
         public class NoteAdapter extends ArrayAdapter<NoteObject> {
-            private Activity activity;
             private List<NoteObject> lNote;
             private LayoutInflater inflater = null;
 
@@ -85,7 +81,6 @@ public class MotesObject {
                 super(activity, textViewResourceId, notes);
                 
                 try {
-                    this.activity = activity;
                     this.lNote = notes;
 
                     inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -98,13 +93,13 @@ public class MotesObject {
         
                 try {
                         
-                    if(rowView.equals(null)) rowView = inflater.inflate(R.layout.listitem_note, null);
+                    if(rowView == null) rowView = inflater.inflate(R.layout.listitem_note, parent, false);
         
                     TextView display_text = (TextView) rowView.findViewById(R.id.listitem_note_text);
                     TextView display_teacher = (TextView) rowView.findViewById(R.id.listitem_note_teacher);
                     TextView display_date = (TextView) rowView.findViewById(R.id.listitem_note_date);
                     
-                    display_name.setText(lNote.get(position).name);
+                    display_text.setText(lNote.get(position).text);
                     display_teacher.setText(lNote.get(position).teacher);
                     display_date.setText(lNote.get(position).created);
                     
@@ -116,5 +111,60 @@ public class MotesObject {
                 return rowView;
             }
         }
+        
+        public class StuffSpinnerAdapter extends ArrayAdapter<UniversalObject> {
+            private List<UniversalObject> lStuff;
+            private LayoutInflater inflater = null;
+
+            public StuffSpinnerAdapter (Activity activity, int textViewResourceId, List<UniversalObject> stuff) {
+                super(activity, textViewResourceId, stuff);
+                
+                try {
+                    this.lStuff = stuff;
+
+                    inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                } catch (Exception e) {}
+            }
+            
+            @Override
+            public View getDropDownView(int position, View convertView,
+                    ViewGroup parent) {
+            	
+            	View rowView = convertView;
+                
+                try {
+                        
+                    if(rowView == null) rowView = inflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
+        
+                    TextView display_name = (TextView) rowView.findViewById(android.R.id.text1);
+                    display_name.setText(lStuff.get(position).name);
+                    rowView.setTag(lStuff.get(position).id);
+        
+                } catch (Exception e) {}
+        
+                
+                return rowView;
+            }
+
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View rowView = convertView;
+        
+                try {
+                        
+                    if(rowView == null) rowView = inflater.inflate(android.R.layout.simple_spinner_item, parent, false);
+        
+                    TextView display_name = (TextView) rowView.findViewById(android.R.id.text1);
+                    display_name.setText(lStuff.get(position).name);
+                    rowView.setTag(lStuff.get(position).id);
+        
+                } catch (Exception e) {}
+        
+                
+                return rowView;
+            }
+        }
+        
+
  
 }

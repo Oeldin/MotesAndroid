@@ -8,19 +8,18 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
-import android.app.Activity;
 import android.content.*;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.preference.PreferenceManager;
-import android.widget.Toast;
+import android.util.Log;
 import at.oeldin.motes.MotesObject.*;
 
 
@@ -32,12 +31,10 @@ public class MotesWrapper {
 	    private SharedPreferences.Editor settingsEditor;
 	    private String DEFAULT_YEAR = "14";
 	    private Context context;
-	    private Activity activity;
 	
 	    public MotesWrapper(Context context)
 	    {
 	    	this.context = context;
-	    	this.activity = (Activity) context;
 	    	disableConnectionReuseIfNecessary();
 	        adress = "http://motes.at/api/";
 	        //settings = PreferenceManager.getDefaultSharedPreferences(context);
@@ -87,31 +84,39 @@ public class MotesWrapper {
 	
 	    public void GetActivities(int Category, int Student)
 	    {
-	        String req = String.format("?action=getactivities&category=%d&student=%d&year=%s", Category, Student, settings.getString("year", DEFAULT_YEAR));
+	        String req = String.format(Locale.getDefault(), "?action=getactivities&category=%d&student=%d&year=%s", Category, Student, settings.getString("year", DEFAULT_YEAR));
 	        new ConnectionTask().execute(req);
 	    }
 	
 	    public void SetActivity(int Category, int Student, String Text)
 	    {
-	        String req = String.format("?action=setactivity&category=%d&student=%d&year=%s&text=%s", Category, Student, settings.getString("year", DEFAULT_YEAR), Text);
+	    	try {
+				Text = URLEncoder.encode(Text, "UTF-8");
+			} catch (UnsupportedEncodingException e) {}
+	    	
+	        String req = String.format(Locale.getDefault(), "?action=setactivity&category=%d&student=%d&year=%s&text=%s", Category, Student, settings.getString("year", DEFAULT_YEAR), Text);
 	        new ModConnectionTask().execute(req);
 	    }
 	
 	    public void SetNote(int Subject, int Student, String Text)
 	    {
-	        String req = String.format("?action=setnote&student=%d&subject=%d&year=&s&text=%s", Student, Subject, settings.getString("year", DEFAULT_YEAR), Text);
+	    	try {
+				Text = URLEncoder.encode(Text, "UTF-8");
+			} catch (UnsupportedEncodingException e) {}
+			
+	        String req = String.format(Locale.getDefault(), "?action=setnote&student=%d&subject=%d&year=%s&text=%s", Student, Subject, settings.getString("year", DEFAULT_YEAR), Text);
 	        new ModConnectionTask().execute(req);
 	    }
 	
 	    public void DeleteNote(int Note)
 	    {
-	        String req = String.format("?action=deletenote&year=%s&note=%d", settings.getString("year", DEFAULT_YEAR), Note);
+	        String req = String.format(Locale.getDefault(), "?action=deletenote&year=%s&note=%d", settings.getString("year", DEFAULT_YEAR), Note);
 	        new ModConnectionTask().execute(req);
 	    }
 	
 	    public void DeleteActivity(int Activity)
 	    {
-	        String req = String.format("?action=deleteactivity&year=%s&activity=%d", settings.getString("year", DEFAULT_YEAR), Activity);
+	        String req = String.format(Locale.getDefault(), "?action=deleteactivity&year=%s&activity=%d", settings.getString("year", DEFAULT_YEAR), Activity);
 	        new ModConnectionTask().execute(req);
 	    }
 	
@@ -200,7 +205,7 @@ public class MotesWrapper {
 			
 			
 			try{
-				String mappedKey = (jObject.names()[0]).toString();
+				String mappedKey = jObject.names().getString(0);
 				
 				JSONArray tempArray = jObject.getJSONArray(mappedKey);
 				
@@ -209,11 +214,15 @@ public class MotesWrapper {
 					
 					for(int i = 0; i<tempArray.length();i++){
 						JSONObject tempObject = tempArray.getJSONObject(i);
+						String nameName;
+						
+						if(mappedKey.equals("activities")) nameName = "text";
+						else nameName = "name";
 
 						tempList.add(
 							mobject.new UniversalObject(
 								tempObject.getInt("id"), 
-								tempObject.getString("name")
+								tempObject.getString(nameName)
 								)
 							);
 					}
@@ -222,13 +231,13 @@ public class MotesWrapper {
 					return mobject;
 				}
 				else if(mappedKey.equals("notes")){
-					List<NotesObject> tempList = new ArrayList<NotesObject>();
+					List<NoteObject> tempList = new ArrayList<NoteObject>();
 					
 					for(int i = 0; i<tempArray.length();i++){
 						JSONObject tempObject = tempArray.getJSONObject(i);
 
 						tempList.add(
-							mobject.new NotesObject(
+							mobject.new NoteObject(
 								tempObject.getInt("id"), 
 								tempObject.getString("text"),
 								tempObject.getString("teacher"),
@@ -263,10 +272,12 @@ public class MotesWrapper {
 	    protected Boolean doInBackground(String... requests) {
 	    	try{
 	    		String mrequest = requests[0];
-		    	String appAuth = "&shortuser=" + settings.getString("mname", "") + "&key=" + settings.getString("key", "");
+	    		
+		    	String appAuth = "&shortuser=" + settings.getString("name", "") + "&key=" + settings.getString("key", "");
 	                URL myUrl = new URL(adress+mrequest+appAuth);
 	                
-			HttpURLConnection connection = (HttpURLConnection) myUrl.openConnection();
+	                Log.d("WETEEF", adress+mrequest+appAuth);
+	            HttpURLConnection connection = (HttpURLConnection) myUrl.openConnection();
 		    	connection.addRequestProperty("Cache-Control", "no-cache");
 		
 		    	InputStream in = new BufferedInputStream(connection.getInputStream());
@@ -300,7 +311,7 @@ public class MotesWrapper {
 	    	try{
 	    		String mrequest = requests[0];
 		    	String appAuth = "&shortuser=" + settings.getString("name", "") + "&key=" + settings.getString("key", "");
-
+		    		
 	                URL myUrl = new URL(adress+mrequest+appAuth);
 		        	HttpURLConnection connection = (HttpURLConnection) myUrl.openConnection();
 		        	connection.addRequestProperty("Cache-Control", "no-cache");
@@ -310,20 +321,12 @@ public class MotesWrapper {
 		        	String jsonString = readInputStream(in);
 		        	
 		        	publishProgress(2);
-		        	//JSONObject jObject = new JSONObject(jsonString);
+		        	JSONObject jObject = new JSONObject(jsonString);
 
-				
-				//create pseudo Object for debugging purposes
-
-				MotesObject jObject = new MotesObject();
-				jObject.students = new ArrayList<UniversalObject>(){
-					add(new UniversalObject(20, "First Student"));
-					add(new UniversalObject(21, "Second Student"));
-				}
-				
+		        	MotesObject myObject = deserializeToMotes(jObject);
+		        	
 		        	publishProgress(3);
-	                //return deserializeToMotes(jObject);
-	                return  jObject;
+	                return myObject;
 	    	}
 	    	catch(Exception e){
 	    		return null;

@@ -29,7 +29,6 @@
         <item>2014/15</item>
         <item>2015/16</item>
     </string-array>
-    <string name="title_activity_login">Login</string>
     <string name="lable_welcome">Welcome to Motes</string>
     <string name="lable_welcome_sub">Please select an item from the Application Bar above.</string>
     <string name="lable_no_notes">Sorry, there are no items to display.</string>

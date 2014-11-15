@@ -1,9 +1,8 @@
 package at.oeldin.motes;
 
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,11 +12,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.os.Build;
-import at.oeldin.motes.MotesObject.StudentAdapter;
-import at.oeldin.motes.MotesObject.StudentObject;
+import at.oeldin.motes.MotesObject.StuffAdapter;
 import at.oeldin.motes.MotesWrapper.MotesCallbackInterface;
 
 public class AllStudentsActivity extends ActionBarActivity implements MotesCallbackInterface {
@@ -98,10 +94,7 @@ public class AllStudentsActivity extends ActionBarActivity implements MotesCallb
 				mWrapper = new MotesWrapper(getActivity());
 				mWrapper.GetStudents();
 				
-				pDia.setMessage("Loading Students...");
-				pDia.setMax(99);
-				pDia.setProgress(0);
-				pDia.show();
+				((AllStudentsActivity) getActivity()).setupProgressDialog();
 		    }
 
 
@@ -119,7 +112,7 @@ public class AllStudentsActivity extends ActionBarActivity implements MotesCallb
 			
 		public void setMyListAdapter(MotesObject result){
 			
-			StudentAdapter myAdapter = result.new StudentAdapter(getActivity(), 0, result.students);
+			StuffAdapter myAdapter = result.new StuffAdapter(getActivity(), 0, result.stuff);
 		       	setListAdapter(myAdapter);
 		}
 	}
@@ -143,6 +136,13 @@ public class AllStudentsActivity extends ActionBarActivity implements MotesCallb
 		fragment.setMyListAdapter(result);
 		
 		pDia.dismiss();
+	}
+	
+	public void setupProgressDialog(){
+		pDia.setMessage("Loading Students...");
+		pDia.setMax(99);
+		pDia.setProgress(0);
+		pDia.show();
 	}
 
 	@Override

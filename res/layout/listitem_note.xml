@@ -8,34 +8,33 @@
         android:id="@+id/listitem_note_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="?android:attr/listItemFirstLineStyle"/>
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
          
-    <linearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
      android:layout_width="match_parent"
      android:layout_height="wrap_content"
-     android:orientation="horizontal"
-     android:layout_below="@id/listitem_note_text">
+     android:orientation="horizontal">
      
         <TextView
             android:id="@+id/listitem_note_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.33"
-            style="?android:attr/listItemSecondLineStyle" />
+        	android:textAppearance="?android:attr/textAppearanceSmall" />
             
         <TextView
             android:id="@+id/listitem_note_student"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.33"
-            style="?android:attr/listItemSecondLineStyle" />
+        	android:textAppearance="?android:attr/textAppearanceSmall" />
             
         <TextView
             android:id="@+id/listitem_note_teacher"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.33"
-            style="?android:attr/listItemSecondLineStyle" />
+        	android:textAppearance="?android:attr/textAppearanceSmall" />
      
     </LinearLayout>
 
