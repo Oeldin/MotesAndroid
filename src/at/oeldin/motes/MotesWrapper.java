@@ -19,7 +19,6 @@ import org.json.JSONObject;
 import android.content.*;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.util.Log;
 import at.oeldin.motes.MotesObject.*;
 
 
@@ -275,8 +274,7 @@ public class MotesWrapper {
 	    		
 		    	String appAuth = "&shortuser=" + settings.getString("name", "") + "&key=" + settings.getString("key", "");
 	                URL myUrl = new URL(adress+mrequest+appAuth);
-	                
-	                Log.d("WETEEF", adress+mrequest+appAuth);
+
 	            HttpURLConnection connection = (HttpURLConnection) myUrl.openConnection();
 		    	connection.addRequestProperty("Cache-Control", "no-cache");
 		
